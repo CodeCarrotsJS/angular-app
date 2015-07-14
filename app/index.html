@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en" ng-app="quiz" class="no-js"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>My AngularJS App</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/normalize.css">
+  <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/main.css">
+  <link rel="stylesheet" href="app.css">
+  <script src="bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
+  <style type="text/css">
+    button[disabled] {
+      color: #555;
+    }
+    .correct {
+      color: #66DD66;
+    }
+    .incorrect {
+      color: #DD6666;
+    }
+  </style>
+</head>
+<body>
+  <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+  <![endif]-->
+
+  <div ng-controller="quizController as quiz">
+    <!-- QUIZ -->
+    <div ng-show="!quiz.isFinished">
+      <p>Pytanie {{ quiz.currentQuestionIndex + 1 }} / {{ quiz.questions.length }}</p>
+      <div ng-repeat="question in quiz.questions" ng-show="$index == quiz.currentQuestionIndex">
+        <p>{{ $index + 1 }}. {{ question.content }}</p>
+        <ul>
+          <li ng-repeat="answer in question.answers">
+            <label>
+              <input type="radio" ng-model="question.selectedAnswer" ng-value="$index">
+              {{ $index + 1 }}. {{ answer }}
+            </label>
+          </li>
+        </ul>
+      </div>
+      <button ng-click="quiz.previousQuestion()" ng-disabled="quiz.currentQuestionIndex == 0">Poprzednie pytanie</button>
+      <button ng-click="quiz.nextQuestion()" ng-disabled="quiz.currentQuestionIndex == quiz.questions.length - 1 || quiz.questions[quiz.currentQuestionIndex].selectedAnswer == null">Następne pytanie</button>
+      <button ng-show="quiz.currentQuestionIndex == quiz.questions.length - 1" ng-disabled="quiz.questions[quiz.currentQuestionIndex].selectedAnswer == null" ng-click="quiz.isFinished = true">Zakończ quiz!</button>
+    </div>
+    <!-- PODSUMOWANIE -->
+    <div ng-show="quiz.isFinished">
+      <p>Zdobyte punkty: {{ quiz.getPoints() }}</p>
+      <div ng-repeat="question in quiz.questions">
+        <p>{{ $index + 1 }}. {{ question.content }}</p>
+        <ul>
+          <li ng-repeat="answer in question.answers" ng-class="{ incorrect: $index == question.selectedAnswer && $index != question.correctAnswer, correct: $index == question.correctAnswer }">
+            {{ answer }}
+          </li>
+        </ul>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- In production use:
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
+  -->
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/angular-route/angular-route.js"></script>
+  <script src="QuestionProvider.js"></script>
+  <script src="QuizController.js"></script>
+</body>
+</html>
